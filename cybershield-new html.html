@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CyberShield AI — Scam &amp; Phishing Detection</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --bg-deep:#0a0f1c; --surface:#121a2c; --surface-2:#17203a; --border:#223047;
+  --text-hi:#e7ecf5; --text-mid:#9aa7bd; --text-low:#64708a;
+  --accent:#38bdf8; --accent-2:#818cf8; --accent-dim:rgba(56,189,248,.12);
+  --safe:#22c55e; --low:#eab308; --warn:#f59e0b; --danger:#ef4444;
+  --radius:12px;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;background:var(--bg-deep);color:var(--text-hi);
+  font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.55;}
+body{
+  background-image:
+    radial-gradient(ellipse 1000px 600px at 10% -10%, rgba(56,189,248,.12), transparent 60%),
+    radial-gradient(ellipse 800px 600px at 100% 0%, rgba(129,140,248,.10), transparent 60%),
+    radial-gradient(ellipse 900px 500px at 50% 100%, rgba(56,189,248,.06), transparent 60%);
+}
+h1,h2,h3{font-family:"Space Grotesk","Inter",sans-serif;margin:0;}
+.wrap{max-width:980px;margin:0 auto;padding:0 24px;}
+a{color:var(--accent);}
+
+/* scanline */
+.scanline{position:fixed;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--accent),transparent);
+  opacity:.5;animation:scan 5s linear infinite;pointer-events:none;z-index:5;}
+@keyframes scan{0%{transform:translateY(0);opacity:0;}10%{opacity:.5;}90%{opacity:.5;}100%{transform:translateY(100vh);opacity:0;}}
+@media(prefers-reduced-motion:reduce){.scanline{display:none;}}
+
+/* header */
+.site-header{border-bottom:1px solid var(--border);padding:18px 0;position:sticky;top:0;
+  background:rgba(10,15,28,.85);backdrop-filter:blur(10px);z-index:10;}
+.site-header .wrap{display:flex;align-items:center;justify-content:space-between;max-width:1040px;}
+.brand{display:flex;align-items:center;gap:10px;}
+.brand-name{font-family:"Space Grotesk",sans-serif;font-weight:600;font-size:1.15rem;letter-spacing:-.01em;}
+.brand-name .accent{color:var(--accent);}
+.brand-mark{animation:logo-pulse 3.2s ease-in-out infinite;}
+@keyframes logo-pulse{
+  0%,100%{filter:drop-shadow(0 0 3px rgba(56,189,248,.6)) drop-shadow(0 0 8px rgba(56,189,248,.3));}
+  50%{filter:drop-shadow(0 0 7px rgba(56,189,248,1)) drop-shadow(0 0 16px rgba(56,189,248,.65));}
+}
+.badge-live{font-family:"JetBrains Mono",monospace;font-size:.72rem;color:var(--safe);
+  border:1px solid rgba(34,197,94,.35);background:rgba(34,197,94,.08);border-radius:20px;padding:5px 12px;
+  display:flex;align-items:center;gap:6px;}
+.badge-live::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--safe);
+  box-shadow:0 0 0 3px rgba(34,197,94,.25);}
+
+/* hero */
+.hero{max-width:1040px;margin:0 auto;padding:64px 24px 40px;text-align:center;position:relative;}
+
+/* glowing hero shield */
+.hero-logo-wrap{position:relative;width:76px;height:76px;margin:0 auto 22px;display:flex;align-items:center;justify-content:center;}
+.hero-logo-glow{position:absolute;inset:-30px;border-radius:50%;
+  background:radial-gradient(circle,rgba(56,189,248,.45) 0%,rgba(56,189,248,.15) 45%,transparent 72%);
+  filter:blur(6px);animation:orb-pulse 3.2s ease-in-out infinite;}
+@keyframes orb-pulse{0%,100%{transform:scale(.92);opacity:.7;}50%{transform:scale(1.12);opacity:1;}}
+.hero-logo{position:relative;z-index:1;animation:logo-pulse 3.2s ease-in-out infinite;}
+
+/* cute floating robot mascots */
+.hero-robot{position:absolute;top:38%;width:132px;height:auto;z-index:1;filter:drop-shadow(0 0 10px rgba(56,189,248,.25));}
+.hero-robot-left{left:-30px;animation:bot-float-a 4.6s ease-in-out infinite;}
+.hero-robot-right{right:-30px;animation:bot-float-b 5.2s ease-in-out infinite .3s;}
+@keyframes bot-float-a{0%,100%{transform:translateY(0) rotate(-3deg);}50%{transform:translateY(-16px) rotate(3deg);}}
+@keyframes bot-float-b{0%,100%{transform:translateY(-6px) rotate(3deg);}50%{transform:translateY(10px) rotate(-3deg);}}
+.bot-led{animation:led-blink 1.8s ease-in-out infinite;}
+.hero-robot-right .bot-led{animation-delay:.6s;}
+@keyframes led-blink{0%,100%{opacity:1;}50%{opacity:.25;}}
+.bot-eye{animation:eye-glow 2.4s ease-in-out infinite;}
+@keyframes eye-glow{0%,100%{opacity:1;}50%{opacity:.55;}}
+@media(max-width:1180px){.hero-robot{display:none;}}
+.hero-eyebrow{font-family:"JetBrains Mono",monospace;font-size:.8rem;color:var(--accent);
+  letter-spacing:.04em;margin-bottom:16px;display:inline-block;
+  border:1px solid rgba(56,189,248,.3);background:var(--accent-dim);padding:6px 14px;border-radius:20px;}
+.hero h1{font-size:clamp(2rem,5vw,3rem);font-weight:700;letter-spacing:-.02em;
+  margin-bottom:18px;background:linear-gradient(135deg,#fff 30%,#9db3d6);
+  -webkit-background-clip:text;background-clip:text;color:transparent;}
+.hero p.lede{color:var(--text-mid);font-size:1.05rem;max-width:640px;margin:0 auto 28px;}
+.hero-stats{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin-top:8px;}
+.stat-chip{border:1px solid var(--border);background:var(--surface);border-radius:10px;
+  padding:14px 22px;min-width:130px;}
+.stat-chip .num{font-family:"Space Grotesk",sans-serif;font-size:1.5rem;font-weight:700;color:var(--accent);}
+.stat-chip .lbl{font-size:.76rem;color:var(--text-mid);margin-top:2px;}
+
+/* scan panel */
+.scan-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  padding:22px;margin:36px 0;max-width:900px;margin-left:auto;margin-right:auto;
+  box-shadow:0 20px 60px -20px rgba(56,189,248,.15);}
+.field-label{display:block;font-size:.82rem;color:var(--text-mid);margin-bottom:10px;}
+textarea#content-input{width:100%;resize:vertical;min-height:140px;background:var(--bg-deep);
+  border:1px solid var(--border);border-radius:8px;color:var(--text-hi);padding:14px;
+  font-family:"JetBrains Mono",monospace;font-size:.88rem;line-height:1.6;}
+textarea#content-input:focus-visible{outline:2px solid var(--accent);outline-offset:1px;}
+textarea#content-input::placeholder{color:var(--text-low);}
+.panel-footer{display:flex;align-items:center;justify-content:space-between;margin-top:14px;flex-wrap:wrap;gap:12px;}
+.char-count{font-family:"JetBrains Mono",monospace;font-size:.75rem;color:var(--text-low);}
+.actions{display:flex;gap:10px;}
+.btn{font-family:"Inter",sans-serif;font-weight:600;font-size:.9rem;border-radius:8px;
+  padding:11px 20px;border:1px solid transparent;cursor:pointer;transition:filter .15s,transform .05s;}
+.btn:active{transform:translateY(1px);}
+.btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#05131f;}
+.btn-primary:hover{filter:brightness(1.08);}
+.btn-ghost{background:transparent;border-color:var(--border);color:var(--text-mid);}
+.btn-ghost:hover{border-color:var(--accent);color:var(--text-hi);}
+.error-msg{margin:14px 0 0;color:var(--danger);font-size:.85rem;}
+
+/* screenshot upload */
+.upload-divider{display:flex;align-items:center;gap:12px;margin:16px 0;color:var(--text-low);font-size:.75rem;}
+.upload-divider::before,.upload-divider::after{content:"";flex:1;height:1px;background:var(--border);}
+.upload-zone{display:flex;align-items:center;gap:14px;border:1.5px dashed var(--border);border-radius:10px;
+  padding:16px;cursor:pointer;transition:border-color .15s,background .15s;}
+.upload-zone:hover,.upload-zone.dragover{border-color:var(--accent);background:var(--accent-dim);}
+.upload-icon{width:38px;height:38px;flex-shrink:0;border-radius:9px;background:var(--accent-dim);
+  display:flex;align-items:center;justify-content:center;}
+.upload-zone-copy{display:flex;flex-direction:column;gap:2px;}
+.upload-zone-text{font-size:.86rem;color:var(--text-hi);}
+.upload-zone-text strong{color:var(--accent);}
+.upload-zone-hint{font-size:.75rem;color:var(--text-low);}
+.upload-info{display:flex;align-items:center;gap:14px;border:1px solid var(--border);border-radius:10px;
+  padding:12px 14px;margin-top:12px;background:var(--surface-2);}
+.upload-thumb{width:46px;height:46px;border-radius:8px;object-fit:cover;border:1px solid var(--border);flex-shrink:0;}
+.upload-info-text{flex:1;min-width:0;}
+.upload-filename{font-size:.8rem;color:var(--text-hi);word-break:break-all;}
+.upload-progress-wrap{height:4px;background:var(--border);border-radius:4px;overflow:hidden;margin-top:8px;}
+.upload-progress-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .2s ease;}
+.upload-status{margin:6px 0 0;font-size:.78rem;color:var(--text-mid);}
+.upload-status.success{color:var(--safe);}
+.upload-status.error{color:var(--danger);}
+.upload-clear-btn{background:none;border:1px solid var(--border);color:var(--text-mid);cursor:pointer;
+  font-size:.75rem;padding:6px 12px;border-radius:6px;flex-shrink:0;}
+.upload-clear-btn:hover{border-color:var(--danger);color:var(--danger);}
+
+/* results */
+.results{margin:0 0 20px;max-width:900px;margin-left:auto;margin-right:auto;}
+.result-header{display:flex;align-items:center;gap:26px;background:var(--surface);
+  border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:20px;flex-wrap:wrap;}
+.risk-meter{position:relative;width:120px;flex-shrink:0;}
+.gauge{width:120px;display:block;}
+#gauge-arc{transition:stroke-dashoffset .6s ease,stroke .4s ease;}
+.gauge-score{position:absolute;left:0;right:0;bottom:2px;text-align:center;font-family:"JetBrains Mono",monospace;}
+#score-value{font-size:1.5rem;font-weight:600;color:var(--text-hi);}
+.score-max{font-size:.75rem;color:var(--text-low);}
+.result-headline{flex:1;min-width:220px;}
+.risk-badge{display:inline-block;font-family:"Space Grotesk",sans-serif;font-weight:600;font-size:1.15rem;margin-bottom:6px;}
+.risk-summary{margin:0;color:var(--text-mid);font-size:.95rem;}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.result-block{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;}
+.result-block.full-width{grid-column:1/-1;}
+.result-block h2{font-size:.95rem;font-weight:600;margin-bottom:14px;}
+.flags-list,.urls-list,.recommendations-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px;}
+.flag-item{border-left:3px solid var(--border);padding-left:12px;}
+.flag-item.weight-high{border-left-color:var(--danger);}
+.flag-item.weight-medium{border-left-color:var(--warn);}
+.flag-item.weight-low{border-left-color:var(--low);}
+.flag-title{font-weight:600;font-size:.88rem;margin-bottom:3px;}
+.flag-detail{color:var(--text-mid);font-size:.84rem;margin:0;}
+.url-item{border:1px solid var(--border);border-radius:8px;padding:12px;}
+.url-item-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:6px;}
+.url-text{font-family:"JetBrains Mono",monospace;font-size:.78rem;word-break:break-all;}
+.url-score{font-family:"JetBrains Mono",monospace;font-size:.75rem;flex-shrink:0;padding:2px 8px;border-radius:20px;}
+.url-reasons{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px;}
+.url-reasons li{font-size:.8rem;color:var(--text-mid);}
+.url-reasons li::before{content:"→ ";color:var(--text-low);}
+.recommendations-list li{display:flex;gap:10px;font-size:.88rem;color:var(--text-mid);align-items:flex-start;}
+.recommendations-list li::before{content:"✓";color:var(--accent);font-family:"JetBrains Mono",monospace;flex-shrink:0;}
+.empty-note{color:var(--text-low);font-size:.85rem;margin:0;}
+
+/* feature grid */
+.section{max-width:1040px;margin:0 auto;padding:56px 24px;}
+.section-head{text-align:center;max-width:560px;margin:0 auto 36px;}
+.section-head .eyebrow{font-family:"JetBrains Mono",monospace;font-size:.76rem;color:var(--accent);
+  letter-spacing:.05em;display:block;margin-bottom:10px;}
+.section-head h2{font-size:1.6rem;font-weight:600;letter-spacing:-.01em;margin-bottom:10px;}
+.section-head p{color:var(--text-mid);font-size:.95rem;margin:0;}
+.feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.feature-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  padding:22px;transition:transform .15s,border-color .15s;}
+.feature-card:hover{transform:translateY(-3px);border-color:rgba(56,189,248,.4);}
+.feature-icon{width:38px;height:38px;border-radius:9px;background:var(--accent-dim);
+  display:flex;align-items:center;justify-content:center;margin-bottom:14px;}
+.feature-card h3{font-size:1rem;font-weight:600;margin-bottom:8px;}
+.feature-card p{color:var(--text-mid);font-size:.85rem;margin:0;}
+
+/* how it works */
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+.step-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;position:relative;}
+.step-num{font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:1.4rem;color:var(--accent);margin-bottom:10px;}
+.step-card h3{font-size:.92rem;font-weight:600;margin-bottom:6px;}
+.step-card p{color:var(--text-mid);font-size:.8rem;margin:0;}
+
+/* privacy strip */
+.privacy-strip{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);
+  padding:22px 26px;display:flex;align-items:center;gap:18px;max-width:1040px;margin:0 auto 56px;}
+.privacy-strip svg{flex-shrink:0;}
+.privacy-strip p{margin:0;color:var(--text-mid);font-size:.9rem;}
+.privacy-strip strong{color:var(--text-hi);}
+
+/* footer */
+.site-footer{border-top:1px solid var(--border);padding:28px 0 60px;}
+.site-footer p{color:var(--text-low);font-size:.8rem;max-width:640px;margin:0 auto;text-align:center;}
+
+/* responsive */
+@media(max-width:760px){
+  .feature-grid{grid-template-columns:1fr 1fr;}
+  .steps{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:640px){
+  .result-grid{grid-template-columns:1fr;}
+  .result-header{flex-direction:column;align-items:flex-start;}
+  .panel-footer{flex-direction:column;align-items:stretch;}
+  .actions{justify-content:stretch;}
+  .actions .btn{flex:1;}
+  .feature-grid{grid-template-columns:1fr;}
+  .steps{grid-template-columns:1fr;}
+  .hero-stats{gap:10px;}
+}
+</style>
+</head>
+<body>
+
+<div class="scanline" aria-hidden="true"></div>
+
+<header class="site-header">
+  <div class="wrap">
+    <div class="brand">
+      <svg class="brand-mark" width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M15 2 L27 6.5 V14.5 C27 21.5 21.8 26.5 15 28.5 C8.2 26.5 3 21.5 3 14.5 V6.5 L15 2Z" stroke="#38BDF8" stroke-width="2" fill="rgba(56,189,248,0.08)"/>
+        <path d="M10.5 15.2 L13.3 18 L19.5 11.5" stroke="#38BDF8" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="brand-name">CyberShield <span class="accent">AI</span></span>
+    </div>
+    <span class="badge-live">Running fully offline in this tab</span>
+  </div>
+</header>
+
+<section class="hero">
+
+  <!-- Cute robot mascot #1 — "Scout", holds a scanning glass -->
+  <svg class="hero-robot hero-robot-left" viewBox="0 0 150 195" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <ellipse cx="75" cy="178" rx="34" ry="7" fill="#38bdf8" opacity="0.12"/>
+    <line x1="75" y1="20" x2="75" y2="4" stroke="#38bdf8" stroke-width="3" stroke-linecap="round"/>
+    <circle class="bot-led" cx="75" cy="4" r="5" fill="#38bdf8" style="filter:drop-shadow(0 0 6px #38bdf8)"/>
+    <rect x="18" y="98" width="20" height="48" rx="10" fill="#17203a" stroke="#38bdf8" stroke-width="2"/>
+    <rect x="112" y="98" width="20" height="48" rx="10" fill="#17203a" stroke="#38bdf8" stroke-width="2"/>
+    <rect x="22" y="92" width="106" height="86" rx="38" fill="#121a2c" stroke="#38bdf8" stroke-width="2.2"/>
+    <circle cx="75" cy="132" r="17" fill="rgba(56,189,248,0.12)" stroke="#38bdf8" stroke-width="1.6"/>
+    <path d="M66 132 L72 138 L85 122" stroke="#38bdf8" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="32" y="20" width="86" height="64" rx="28" fill="#17203a" stroke="#38bdf8" stroke-width="2.2"/>
+    <circle class="bot-eye" cx="58" cy="52" r="9" fill="#38bdf8" style="filter:drop-shadow(0 0 5px #38bdf8)"/>
+    <circle class="bot-eye" cx="92" cy="52" r="9" fill="#38bdf8" style="filter:drop-shadow(0 0 5px #38bdf8)"/>
+    <circle cx="55" cy="49" r="2.4" fill="#e7ecf5"/>
+    <circle cx="89" cy="49" r="2.4" fill="#e7ecf5"/>
+    <path d="M56 68 Q75 78 94 68" stroke="#818cf8" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <circle cx="139" cy="158" r="14" fill="none" stroke="#818cf8" stroke-width="4.5"/>
+    <circle class="bot-led" cx="139" cy="158" r="3.5" fill="#38bdf8" style="filter:drop-shadow(0 0 6px #38bdf8)"/>
+    <line x1="148" y1="167" x2="157" y2="176" stroke="#818cf8" stroke-width="5" stroke-linecap="round"/>
+  </svg>
+
+  <!-- Cute robot mascot #2 — "Sentry", gives an all-clear wave -->
+  <svg class="hero-robot hero-robot-right" viewBox="0 0 150 195" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <ellipse cx="75" cy="178" rx="34" ry="7" fill="#818cf8" opacity="0.12"/>
+    <line x1="75" y1="20" x2="75" y2="4" stroke="#818cf8" stroke-width="3" stroke-linecap="round"/>
+    <circle class="bot-led" cx="75" cy="4" r="5" fill="#818cf8" style="filter:drop-shadow(0 0 6px #818cf8)"/>
+    <rect x="112" y="98" width="20" height="48" rx="10" fill="#17203a" stroke="#818cf8" stroke-width="2"/>
+    <g transform="rotate(-28 26 100)">
+      <rect x="16" y="70" width="20" height="48" rx="10" fill="#17203a" stroke="#818cf8" stroke-width="2"/>
+    </g>
+    <path d="M8 60 L18 52 L28 58 L20 68 Z" fill="rgba(56,189,248,0.18)" stroke="#38bdf8" stroke-width="1.6" stroke-linejoin="round"/>
+    <rect x="22" y="92" width="106" height="86" rx="38" fill="#121a2c" stroke="#818cf8" stroke-width="2.2"/>
+    <path d="M75 112 L83 128 L100 130 L87 141 L91 158 L75 149 L59 158 L63 141 L50 130 L67 128 Z"
+          fill="rgba(129,140,248,0.16)" stroke="#818cf8" stroke-width="1.6" stroke-linejoin="round"/>
+    <rect x="32" y="20" width="86" height="64" rx="28" fill="#17203a" stroke="#818cf8" stroke-width="2.2"/>
+    <path class="bot-eye" d="M50 50 Q58 42 66 50" stroke="#818cf8" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <circle class="bot-eye" cx="92" cy="52" r="9" fill="#818cf8" style="filter:drop-shadow(0 0 5px #818cf8)"/>
+    <circle cx="89" cy="49" r="2.4" fill="#e7ecf5"/>
+    <path d="M56 68 Q75 78 94 68" stroke="#38bdf8" stroke-width="3" fill="none" stroke-linecap="round"/>
+  </svg>
+
+  <div class="hero-logo-wrap">
+    <div class="hero-logo-glow" aria-hidden="true"></div>
+    <svg class="hero-logo" width="76" height="76" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M15 2 L27 6.5 V14.5 C27 21.5 21.8 26.5 15 28.5 C8.2 26.5 3 21.5 3 14.5 V6.5 L15 2Z" stroke="#38BDF8" stroke-width="1.6" fill="rgba(56,189,248,0.14)"/>
+      <path d="M10.5 15.2 L13.3 18 L19.5 11.5" stroke="#38BDF8" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+
+  <span class="hero-eyebrow">AI-ASSISTED SCAM &amp; PHISHING DETECTION</span>
+  <h1>Is this message trying to scam you?<br/>Find out in one click.</h1>
+  <p class="lede">
+    Paste a suspicious text, email, WhatsApp/SMS message, or link. CyberShield AI checks it
+    against known phishing, scam, and social-engineering patterns and explains exactly what
+    looks wrong — and what to do about it. Everything runs right here in your browser.
+  </p>
+  <div class="hero-stats">
+    <div class="stat-chip"><div class="num">15+</div><div class="lbl">Detection rules</div></div>
+    <div class="stat-chip"><div class="num">4</div><div class="lbl">Risk levels</div></div>
+    <div class="stat-chip"><div class="num">0ms</div><div class="lbl">Network round-trip</div></div>
+    <div class="stat-chip"><div class="num">100%</div><div class="lbl">Runs offline</div></div>
+  </div>
+</section>
+
+<div class="wrap">
+  <section class="scan-panel" aria-label="Content scanner">
+    <label for="content-input" class="field-label">Message, email or link to check</label>
+    <textarea id="content-input" rows="7"
+      placeholder="Example: Dear Customer, your account will be suspended in 24 hours. Click here to verify: http://secure-update-bank.tk/login"></textarea>
+
+    <div class="upload-divider"><span>or</span></div>
+
+    <label for="image-input" id="upload-zone" class="upload-zone">
+      <input type="file" id="image-input" accept="image/*" hidden />
+      <span class="upload-icon" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 16V4M12 4L7 9M12 4L17 9" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 16V18C4 19.1 4.9 20 6 20H18C19.1 20 20 19.1 20 18V16" stroke="#38bdf8" stroke-width="2" stroke-linecap="round"/></svg>
+      </span>
+      <span class="upload-zone-copy">
+        <span class="upload-zone-text"><strong>Click to upload a screenshot</strong> or drag one here</span>
+        <span class="upload-zone-hint">We'll pull the text out automatically — the image itself is never uploaded anywhere</span>
+      </span>
+    </label>
+
+    <div id="upload-info" class="upload-info" hidden>
+      <img id="upload-thumb" class="upload-thumb" alt="" />
+      <div class="upload-info-text">
+        <span id="upload-filename" class="upload-filename"></span>
+        <div class="upload-progress-wrap"><div id="upload-progress-bar" class="upload-progress-bar"></div></div>
+        <p id="upload-status" class="upload-status"></p>
+      </div>
+      <button id="upload-clear-btn" class="upload-clear-btn" type="button">Remove</button>
+    </div>
+
+    <div class="panel-footer">
+      <span id="char-count" class="char-count">0 / 5000</span>
+      <div class="actions">
+        <button id="example-btn" class="btn btn-ghost" type="button">Try an example</button>
+        <button id="scan-btn" class="btn btn-primary" type="button"><span id="scan-btn-text">Scan for threats</span></button>
+      </div>
+    </div>
+    <p id="error-msg" class="error-msg" hidden></p>
+  </section>
+
+  <section id="results" class="results" hidden aria-live="polite">
+    <div class="result-header">
+      <div class="risk-meter">
+        <svg viewBox="0 0 120 68" class="gauge">
+          <path d="M10 60 A50 50 0 0 1 110 60" fill="none" stroke="#1E293B" stroke-width="10" stroke-linecap="round"/>
+          <path id="gauge-arc" d="M10 60 A50 50 0 0 1 110 60" fill="none" stroke="#22C55E" stroke-width="10" stroke-linecap="round" stroke-dasharray="157" stroke-dashoffset="157"/>
+        </svg>
+        <div class="gauge-score"><span id="score-value">0</span><span class="score-max">/100</span></div>
+      </div>
+      <div class="result-headline">
+        <span id="risk-badge" class="risk-badge">Safe</span>
+        <p id="risk-summary" class="risk-summary">—</p>
+      </div>
+    </div>
+    <div class="result-grid">
+      <div class="result-block">
+        <h2>Red flags detected</h2>
+        <ul id="flags-list" class="flags-list"></ul>
+        <p id="no-flags" class="empty-note" hidden>No known red flags were found — but always stay cautious with unsolicited messages.</p>
+      </div>
+      <div class="result-block">
+        <h2>Links found in this content</h2>
+        <ul id="urls-list" class="urls-list"></ul>
+        <p id="no-urls" class="empty-note" hidden>No links were found in this content.</p>
+      </div>
+      <div class="result-block full-width">
+        <h2>What you should do</h2>
+        <ul id="recommendations-list" class="recommendations-list"></ul>
+      </div>
+    </div>
+  </section>
+</div>
+
+<section class="section" id="features">
+  <div class="section-head">
+    <span class="eyebrow">CAPABILITIES</span>
+    <h2>What CyberShield AI catches</h2>
+    <p>One engine, covering the most common attack patterns people actually run into.</p>
+  </div>
+  <div class="feature-grid">
+    <div class="feature-card"><div class="feature-icon">💬</div><h3>Scam &amp; fraud messages</h3><p>Fake prize claims, lottery wins, and "you've been selected" style bait.</p></div>
+    <div class="feature-card"><div class="feature-icon">🎣</div><h3>Phishing attempts</h3><p>Messages engineered to steal OTPs, PINs, passwords, and card details.</p></div>
+    <div class="feature-card"><div class="feature-icon">🔗</div><h3>Suspicious URLs</h3><p>Raw IPs, punycode look-alikes, "@" redirect tricks, and shortened links.</p></div>
+    <div class="feature-card"><div class="feature-icon">🏦</div><h3>Fake websites</h3><p>Domains impersonating banks and popular brands with lookalike spelling.</p></div>
+    <div class="feature-card"><div class="feature-icon">📧</div><h3>Fraudulent emails</h3><p>Generic greetings, urgency language, and mismatched sender patterns.</p></div>
+    <div class="feature-card"><div class="feature-icon">🎭</div><h3>Social engineering</h3><p>Authority impersonation — fake banks, couriers, tax offices, and police.</p></div>
+    <div class="feature-card"><div class="feature-icon">💸</div><h3>UPI / payment scams</h3><p>QR-code traps and "pay a small fee to release your parcel" tactics.</p></div>
+    <div class="feature-card"><div class="feature-icon">⚡</div><h3>Instant explanations</h3><p>Every flag comes with a plain-English reason, not just a score.</p></div>
+    <div class="feature-card"><div class="feature-icon">🔒</div><h3>Privacy by design</h3><p>Nothing you type ever leaves this browser tab — analysis is fully local.</p></div>
+  </div>
+</section>
+
+<section class="section" id="how-it-works">
+  <div class="section-head">
+    <span class="eyebrow">HOW IT WORKS</span>
+    <h2>From message to verdict in four steps</h2>
+  </div>
+  <div class="steps">
+    <div class="step-card"><div class="step-num">01</div><h3>Paste content</h3><p>Drop in a message, email, or link exactly as you received it.</p></div>
+    <div class="step-card"><div class="step-num">02</div><h3>Pattern matching</h3><p>The engine checks it against known scam, phishing, and social-engineering signatures.</p></div>
+    <div class="step-card"><div class="step-num">03</div><h3>Risk scoring</h3><p>Every match adds weighted points to a transparent 0–100 risk score.</p></div>
+    <div class="step-card"><div class="step-num">04</div><h3>Clear guidance</h3><p>You get a risk level, the specific red flags, and concrete next steps.</p></div>
+  </div>
+</section>
+
+<div class="privacy-strip">
+  <svg width="34" height="34" viewBox="0 0 24 24" fill="none"><path d="M12 2 L21 6 V12 C21 17 17 20.5 12 22 C7 20.5 3 17 3 12 V6 L12 2Z" stroke="#38BDF8" stroke-width="1.6"/><path d="M9 12 L11 14 L15.5 9" stroke="#38BDF8" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  <p><strong>Nothing you paste or upload is ever transmitted anywhere.</strong> The detection engine and the screenshot text-reader both run as JavaScript directly inside your browser. Images and messages are analyzed on-device and never leave this tab — no server, no account, no data collection.</p>
+</div>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>
+      CyberShield AI uses a transparent, rule-based heuristic engine (pattern &amp; keyword matching),
+      not a live threat-intelligence feed. Treat every result as a helpful second opinion, not a
+      guarantee — when in doubt, verify directly with the organization involved.
+    </p>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js"></script>
+<script>
+/* Note: the line above loads an on-device text-recognition library from a CDN.
+   It needs internet access ONCE to download (like the Google Fonts link in
+   <head>). After that, it reads text out of images entirely inside your
+   browser — the image itself is never sent anywhere. If you're offline,
+   screenshot upload just won't be available; typing/pasting text still
+   works with zero network access at all. */
+/* ============================================================
+   DETECTION ENGINE — identical logic to the project's analyzer,
+   embedded here so this single file works with zero setup.
+   ============================================================ */
+const URGENCY_PHRASES=["urgent","immediately","act now","act fast","right away","within 24 hours","within 12 hours","expires today","expiring soon","last warning","final notice","limited time","time sensitive","account will be suspended","account will be blocked","account has been locked","account suspended","verify now","confirm now","immediate action required","response required"];
+const SENSITIVE_INFO_REQUESTS=["otp","one time password","cvv","pin number","upi pin","atm pin","card number","aadhaar","aadhar","pan card","net banking password","login password","bank account number","social security number","ssn","date of birth and password","share your otp","share your pin","enter your password"];
+const REWARD_SCAM_PHRASES=["you have won","you've won","congratulations you","claim your prize","claim your reward","lucky winner","lottery","cashback offer","free gift","you are selected","selected winner","redeem now","claim your gift card"];
+const IMPERSONATION_KEYWORDS=["income tax department","customs department","courier company","delivery failed","parcel held","your parcel","bank of","kyc update","kyc verification","update your kyc","rbi","electricity board","power will be disconnected","police department","legal action","arrest warrant","court notice"];
+const PAYMENT_PRESSURE_PHRASES=["pay now","processing fee","refundable deposit","small fee","release your parcel","clear the payment","pay to unlock","send money to","transfer immediately","pay via upi","scan this qr","scan the qr code to receive"];
+const GENERIC_GREETINGS=["dear customer","dear user","dear account holder","dear valued customer","dear sir/madam","dear beneficiary"];
+const LINK_ACTION_PHRASES=["click here","click this link","click below","tap here","verify your account","update your details","confirm your identity","login to continue","download the attachment"];
+const URL_SHORTENERS=["bit.ly","tinyurl.com","t.co","goo.gl","is.gd","ow.ly","buff.ly","cutt.ly","rebrand.ly","shorturl.at","rb.gy"];
+const SUSPICIOUS_TLDS=[".tk",".ml",".ga",".cf",".gq",".xyz",".top",".work",".click",".link",".loan",".men",".zip",".review"];
+const COMMONLY_SPOOFED_BRANDS=["paypal","amazon","flipkart","google","microsoft","apple","facebook","instagram","whatsapp","netflix","hdfc","sbi","icici","axisbank","paytm","phonepe","gpay","irctc","lic"];
+
+function extractUrls(text){
+  const urlRegex=/((?:https?:\/\/|www\.)[^\s<>"')]+)/gi;
+  const matches=text.match(urlRegex)||[];
+  return [...new Set(matches)];
+}
+function findMatches(text,list){const lower=text.toLowerCase();return list.filter(p=>lower.includes(p));}
+function shoutingRatio(text){const words=text.match(/[A-Za-z]{3,}/g)||[];if(!words.length)return 0;const s=words.filter(w=>w===w.toUpperCase());return s.length/words.length;}
+function countExclamations(text){return (text.match(/!/g)||[]).length;}
+
+function analyzeText(text){
+  const flags=[];let score=0;
+  const urgency=findMatches(text,URGENCY_PHRASES);
+  if(urgency.length){score+=Math.min(20,8*urgency.length);flags.push({title:"Creates a false sense of urgency",detail:`Found urgency language such as "${urgency[0]}". Scammers pressure you to act before you can think it through.`,weight:"high"});}
+  const sensitive=findMatches(text,SENSITIVE_INFO_REQUESTS);
+  if(sensitive.length){score+=Math.min(30,15*sensitive.length);flags.push({title:"Asks for sensitive personal or banking information",detail:`Mentions sensitive data like "${sensitive[0]}". No legitimate bank, company, or government body asks for OTPs, PINs, or passwords over chat/email/SMS.`,weight:"high"});}
+  const reward=findMatches(text,REWARD_SCAM_PHRASES);
+  if(reward.length){score+=Math.min(20,10*reward.length);flags.push({title:"Unrealistic reward or prize claim",detail:`Contains phrases like "${reward[0]}". Unexpected prizes/lottery wins for contests you never entered are a classic scam pattern.`,weight:"medium"});}
+  const impersonation=findMatches(text,IMPERSONATION_KEYWORDS);
+  if(impersonation.length){score+=Math.min(20,10*impersonation.length);flags.push({title:"Possible impersonation of an authority or company",detail:`References "${impersonation[0]}", combined with other pressure tactics. Verify independently through the official website or helpline, never through the link/number in the message.`,weight:"medium"});}
+  const payment=findMatches(text,PAYMENT_PRESSURE_PHRASES);
+  if(payment.length){score+=Math.min(20,10*payment.length);flags.push({title:"Pressures you to pay or scan a QR code",detail:`Contains "${payment[0]}". Be very cautious of any message that asks you to pay a fee to "release", "unlock" or "claim" something.`,weight:"high"});}
+  const greeting=findMatches(text,GENERIC_GREETINGS);
+  if(greeting.length){score+=6;flags.push({title:"Generic, non-personalized greeting",detail:`Uses a generic greeting like "${greeting[0]}" instead of your actual name, suggesting a mass-sent message.`,weight:"low"});}
+  const linkAction=findMatches(text,LINK_ACTION_PHRASES);
+  if(linkAction.length){score+=Math.min(15,7*linkAction.length);flags.push({title:"Pushes you to click a link or take immediate action",detail:`Contains a call-to-action like "${linkAction[0]}". Always type official URLs manually instead of clicking links in unsolicited messages.`,weight:"medium"});}
+  const shout=shoutingRatio(text);
+  if(shout>0.15){score+=8;flags.push({title:"Excessive capitalization",detail:"A large portion of the words are in ALL CAPS, a common tactic to create alarm.",weight:"low"});}
+  const exclaims=countExclamations(text);
+  if(exclaims>=3){score+=6;flags.push({title:"Overuse of exclamation marks",detail:`Found ${exclaims} exclamation marks, often used to manufacture excitement or panic.`,weight:"low"});}
+  return {score,flags};
+}
+
+function safeParseUrl(rawUrl){
+  try{const withProtocol=rawUrl.startsWith("http")?rawUrl:`http://${rawUrl}`;return new URL(withProtocol);}catch{return null;}
+}
+
+function analyzeSingleUrl(rawUrl){
+  const flags=[];let score=0;const parsed=safeParseUrl(rawUrl);
+  if(!parsed){return {url:rawUrl,score:15,flags:[{title:"Malformed URL",detail:"This does not look like a well-formed web address.",weight:"medium"}]};}
+  const hostname=parsed.hostname.toLowerCase();
+  if(parsed.protocol!=="https:"){score+=10;flags.push({title:"Not using a secure (HTTPS) connection",detail:"The link uses HTTP instead of HTTPS, meaning data sent isn't encrypted in transit.",weight:"medium"});}
+  if(/^\d{1,3}(\.\d{1,3}){3}$/.test(hostname)){score+=25;flags.push({title:"Uses a raw IP address instead of a domain name",detail:`The link points directly to an IP address (${hostname}) rather than a normal domain. Legitimate businesses almost never do this.`,weight:"high"});}
+  if(rawUrl.includes("@")){score+=25;flags.push({title:'Contains an "@" redirect trick',detail:"URLs with an @ symbol can show a fake trusted address while actually taking you somewhere else entirely.",weight:"high"});}
+  if(hostname.includes("xn--")){score+=25;flags.push({title:"Possible look-alike domain (punycode)",detail:"This domain uses punycode encoding, sometimes used to imitate a trusted brand with lookalike characters.",weight:"high"});}
+  const dotCount=(hostname.match(/\./g)||[]).length;
+  if(dotCount>=3){score+=12;flags.push({title:"Unusually long chain of subdomains",detail:`The domain "${hostname}" has an unusually deep subdomain structure, sometimes used to disguise the real destination.`,weight:"medium"});}
+  if(URL_SHORTENERS.some(s=>hostname.includes(s))){score+=12;flags.push({title:"Uses a link-shortening service",detail:"Shortened links hide the real destination until you click, which scammers exploit.",weight:"medium"});}
+  if(SUSPICIOUS_TLDS.some(tld=>hostname.endsWith(tld))){score+=12;flags.push({title:"Domain ending frequently abused for scams",detail:`The domain ending "${hostname.slice(hostname.lastIndexOf("."))}" is inexpensive and commonly used in scam/phishing campaigns.`,weight:"medium"});}
+  const spoofedBrand=COMMONLY_SPOOFED_BRANDS.find(b=>hostname.includes(b));
+  if(spoofedBrand){
+    const isOfficial=hostname===`${spoofedBrand}.com`||hostname.endsWith(`.${spoofedBrand}.com`)||hostname===`www.${spoofedBrand}.com`;
+    if(!isOfficial){score+=22;flags.push({title:"Possible brand impersonation",detail:`Contains the brand name "${spoofedBrand}" but the domain "${hostname}" does not match that brand's official website — a common phishing pattern.`,weight:"high"});}
+  }
+  if(hostname.length>35){score+=8;flags.push({title:"Unusually long domain name",detail:"Long, cluttered domain names are often used to bury a suspicious phrase or hide the real brand.",weight:"low"});}
+  const pathAndQuery=(parsed.pathname+parsed.search).toLowerCase();
+  const suspiciousPathWords=["verify","secure","update","confirm","login","unlock","reset-password"];
+  const pathHit=suspiciousPathWords.find(w=>pathAndQuery.includes(w));
+  if(pathHit&&dotCount+(spoofedBrand?1:0)>=1){score+=6;flags.push({title:"Suspicious wording in the link path",detail:`The link path contains "${pathHit}", a word frequently used in credential-harvesting pages.`,weight:"low"});}
+  return {url:rawUrl,score:Math.min(100,score),flags};
+}
+function analyzeUrls(text){return extractUrls(text).map(analyzeSingleUrl);}
+
+function riskLevelFor(score){
+  if(score>=70)return {level:"Dangerous",color:"#ef4444",summary:"This looks highly likely to be a scam or phishing attempt."};
+  if(score>=45)return {level:"Suspicious",color:"#f59e0b",summary:"This has several warning signs. Proceed with strong caution."};
+  if(score>=20)return {level:"Low Risk",color:"#eab308",summary:"A few minor warning signs were found. Stay alert."};
+  return {level:"Safe",color:"#22c55e",summary:"No major red flags were detected in this content."};
+}
+function recommendationsFor(level){
+  const common=["Never share OTPs, PINs, passwords, or card details with anyone who contacts you.","Don't click links or open attachments in unsolicited messages.","Verify by contacting the organization directly using details from their official website, not the message."];
+  if(level==="Dangerous")return ["Do not click any links, reply, or make any payment.","Block and report the sender on the platform you received this on.",...common,"If you already shared details or paid money, contact your bank immediately and consider filing a cybercrime report."];
+  if(level==="Suspicious")return ["Treat this message as untrustworthy until proven otherwise.",...common,"If it claims to be from a company, log in via the official app/website separately to check, rather than using any link provided."];
+  if(level==="Low Risk")return ["Double check the sender's exact email address or phone number.",...common];
+  return ["Still avoid sharing sensitive information unless you initiated the contact yourself.","When in doubt, verify independently before acting."];
+}
+function analyzeContent(rawInput){
+  const text=(rawInput||"").trim();
+  if(!text)throw new Error("No content provided to analyze.");
+  const textResult=analyzeText(text);
+  const urlResults=analyzeUrls(text);
+  const worstUrlScore=urlResults.reduce((max,u)=>Math.max(max,u.score),0);
+  const combinedScore=Math.min(100,Math.round(textResult.score*0.6+worstUrlScore*0.4));
+  const allFlags=[...textResult.flags,...urlResults.flatMap(u=>u.flags.map(f=>({...f,title:`[Link: ${u.url}] ${f.title}`})))];
+  const {level,color,summary}=riskLevelFor(combinedScore);
+  return {input:text,riskScore:combinedScore,riskLevel:level,riskColor:color,summary,redFlags:allFlags,urls:urlResults,recommendations:recommendationsFor(level)};
+}
+
+/* ============================================================
+   UI WIRING — same behavior as the full project's app.js,
+   calling analyzeContent() directly instead of fetch().
+   ============================================================ */
+const contentInput=document.getElementById("content-input");
+const charCount=document.getElementById("char-count");
+const scanBtn=document.getElementById("scan-btn");
+const scanBtnText=document.getElementById("scan-btn-text");
+const exampleBtn=document.getElementById("example-btn");
+const errorMsg=document.getElementById("error-msg");
+const resultsSection=document.getElementById("results");
+const gaugeArc=document.getElementById("gauge-arc");
+const scoreValue=document.getElementById("score-value");
+const riskBadge=document.getElementById("risk-badge");
+const riskSummary=document.getElementById("risk-summary");
+const flagsList=document.getElementById("flags-list");
+const noFlags=document.getElementById("no-flags");
+const urlsList=document.getElementById("urls-list");
+const noUrls=document.getElementById("no-urls");
+const recommendationsList=document.getElementById("recommendations-list");
+
+const MAX_CHARS=5000;
+const GAUGE_CIRCUMFERENCE=157;
+const EXAMPLE_MESSAGE="Dear Customer,\n\nYour bank account has been temporarily suspended due to unusual activity. You must verify your account within 24 hours or it will be permanently blocked.\n\nClick here to verify now: http://secure-update-hdfcbank.tk/login\n\nPlease have your card number, CVV and OTP ready for verification.\n\nRegards,\nSecurity Team";
+
+function updateCharCount(){const len=contentInput.value.length;charCount.textContent=`${len} / ${MAX_CHARS}`;charCount.style.color=len>MAX_CHARS?"#ef4444":"";}
+function setLoading(v){scanBtn.disabled=v;scanBtnText.textContent=v?"Scanning...":"Scan for threats";}
+function showError(m){errorMsg.textContent=m;errorMsg.hidden=false;}
+function clearError(){errorMsg.hidden=true;errorMsg.textContent="";}
+function escapeHtml(str){const div=document.createElement("div");div.textContent=str;return div.innerHTML;}
+function riskLevelLabel(score){
+  if(score>=70)return {label:"Dangerous",color:"#ef4444",bg:"rgba(239,68,68,0.12)"};
+  if(score>=45)return {label:"Suspicious",color:"#f59e0b",bg:"rgba(245,158,11,0.12)"};
+  if(score>=20)return {label:"Low Risk",color:"#eab308",bg:"rgba(234,179,8,0.12)"};
+  return {label:"Safe",color:"#22c55e",bg:"rgba(34,197,94,0.12)"};
+}
+
+function renderResult(report){
+  const offset=GAUGE_CIRCUMFERENCE-(GAUGE_CIRCUMFERENCE*report.riskScore)/100;
+  gaugeArc.style.strokeDashoffset=String(offset);
+  gaugeArc.style.stroke=report.riskColor;
+  scoreValue.textContent=report.riskScore;
+  riskBadge.textContent=report.riskLevel;
+  riskBadge.style.color=report.riskColor;
+  riskSummary.textContent=report.summary;
+
+  flagsList.innerHTML="";
+  if(report.redFlags.length===0){noFlags.hidden=false;}
+  else{noFlags.hidden=true;
+    report.redFlags.forEach(flag=>{
+      const li=document.createElement("li");
+      li.className=`flag-item weight-${flag.weight}`;
+      li.innerHTML=`<p class="flag-title">${escapeHtml(flag.title)}</p><p class="flag-detail">${escapeHtml(flag.detail)}</p>`;
+      flagsList.appendChild(li);
+    });
+  }
+
+  urlsList.innerHTML="";
+  if(report.urls.length===0){noUrls.hidden=false;}
+  else{noUrls.hidden=true;
+    report.urls.forEach(u=>{
+      const level=riskLevelLabel(u.score);
+      const li=document.createElement("li");
+      li.className="url-item";
+      li.innerHTML=`<div class="url-item-head"><span class="url-text">${escapeHtml(u.url)}</span><span class="url-score" style="background:${level.bg}; color:${level.color};">${u.score}/100 · ${level.label}</span></div><ul class="url-reasons">${u.flags.map(f=>`<li>${escapeHtml(f.title)}</li>`).join("")||"<li>No specific link red flags found.</li>"}</ul>`;
+      urlsList.appendChild(li);
+    });
+  }
+
+  recommendationsList.innerHTML="";
+  report.recommendations.forEach(rec=>{const li=document.createElement("li");li.textContent=rec;recommendationsList.appendChild(li);});
+
+  resultsSection.hidden=false;
+  resultsSection.scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+function scanContent(){
+  clearError();
+  const content=contentInput.value.trim();
+  if(!content){showError("Please paste a message or link first.");return;}
+  if(content.length>MAX_CHARS){showError(`Content is too long. Please keep it under ${MAX_CHARS} characters.`);return;}
+  setLoading(true);
+  // tiny delay purely for a smooth "scanning" feel — analysis itself is instant
+  setTimeout(()=>{
+    try{
+      const result=analyzeContent(content);
+      renderResult(result);
+    }catch(err){
+      console.error(err);
+      showError("Something went wrong while analyzing. Please try again.");
+    }finally{
+      setLoading(false);
+    }
+  },350);
+}
+
+contentInput.addEventListener("input",updateCharCount);
+scanBtn.addEventListener("click",scanContent);
+contentInput.addEventListener("keydown",e=>{if((e.ctrlKey||e.metaKey)&&e.key==="Enter")scanContent();});
+exampleBtn.addEventListener("click",()=>{contentInput.value=EXAMPLE_MESSAGE;updateCharCount();contentInput.focus();});
+updateCharCount();
+
+/* ---------------- Screenshot upload + on-device OCR ---------------- */
+const uploadZone=document.getElementById("upload-zone");
+const imageInput=document.getElementById("image-input");
+const uploadInfo=document.getElementById("upload-info");
+const uploadThumb=document.getElementById("upload-thumb");
+const uploadFilename=document.getElementById("upload-filename");
+const uploadProgressBar=document.getElementById("upload-progress-bar");
+const uploadStatus=document.getElementById("upload-status");
+const uploadClearBtn=document.getElementById("upload-clear-btn");
+
+function setUploadProgress(pct){uploadProgressBar.style.width=`${pct}%`;}
+
+function showUploadMessage(msg,kind){
+  uploadStatus.textContent=msg;
+  uploadStatus.className="upload-status"+(kind?` ${kind}`:"");
+}
+
+function resetUpload(){
+  uploadInfo.hidden=true;
+  imageInput.value="";
+  if(uploadThumb.src)URL.revokeObjectURL(uploadThumb.src);
+  uploadThumb.src="";
+  showUploadMessage("");
+  setUploadProgress(0);
+}
+
+async function handleImageFile(file){
+  if(!file)return;
+  if(!file.type.startsWith("image/")){
+    uploadInfo.hidden=false;
+    showUploadMessage("Please choose an image file (PNG or JPG).","error");
+    return;
+  }
+  if(file.size>8*1024*1024){
+    uploadInfo.hidden=false;
+    showUploadMessage("That image is too large. Please use a file under 8MB.","error");
+    return;
+  }
+
+  uploadInfo.hidden=false;
+  uploadFilename.textContent=file.name;
+  if(uploadThumb.src)URL.revokeObjectURL(uploadThumb.src);
+  uploadThumb.src=URL.createObjectURL(file);
+  showUploadMessage("Reading text from image…");
+  setUploadProgress(8);
+  clearError();
+
+  if(typeof Tesseract==="undefined"){
+    showUploadMessage("Screenshot reading needs an internet connection the first time, to load the on-device reader. You can still paste the message text above.","error");
+    setUploadProgress(0);
+    return;
+  }
+
+  try{
+    const {data}=await Tesseract.recognize(file,"eng",{
+      logger:(m)=>{
+        if(m.status==="recognizing text"&&typeof m.progress==="number"){
+          setUploadProgress(Math.round(m.progress*100));
+        }
+      },
+    });
+    const text=((data&&data.text)||"").trim();
+    setUploadProgress(100);
+
+    if(!text){
+      showUploadMessage("Couldn't find readable text in this image. Try a clearer screenshot, or paste the message manually.","error");
+      return;
+    }
+
+    contentInput.value=text;
+    updateCharCount();
+    showUploadMessage("Text extracted — review it above, then hit Scan.","success");
+  }catch(err){
+    console.error(err);
+    const blocked=(err&&(err.name==="SecurityError"||/worker/i.test(err.message||"")));
+    if(blocked){
+      showUploadMessage("This browser/preview is blocking the screenshot reader (a security sandbox restriction). Try opening this HTML file directly in a normal browser tab instead of an embedded preview — or just paste the message text manually above.","error");
+    }else{
+      showUploadMessage("Something went wrong reading this image. Please try again or paste the text manually.","error");
+    }
+    setUploadProgress(0);
+  }
+}
+
+imageInput.addEventListener("change",(e)=>{
+  const file=e.target.files&&e.target.files[0];
+  handleImageFile(file);
+});
+
+["dragenter","dragover"].forEach((evt)=>{
+  uploadZone.addEventListener(evt,(e)=>{e.preventDefault();uploadZone.classList.add("dragover");});
+});
+["dragleave","drop"].forEach((evt)=>{
+  uploadZone.addEventListener(evt,(e)=>{e.preventDefault();uploadZone.classList.remove("dragover");});
+});
+uploadZone.addEventListener("drop",(e)=>{
+  const file=e.dataTransfer.files&&e.dataTransfer.files[0];
+  if(file)handleImageFile(file);
+});
+
+uploadClearBtn.addEventListener("click",resetUpload);
+</script>
+</body>
+</html>
