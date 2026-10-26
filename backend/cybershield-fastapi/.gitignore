@@ -1,0 +1,27 @@
+# Secrets
+.env
+.env.local
+
+# Python virtual environment
+venv/
+env/
+.venv/
+
+# Python cache files
+__pycache__/
+*.pyc
+
+# Uploaded files
+uploads/
+uploads/tmp/
+
+# Logs
+*.log
+
+# OS junk files
+.DS_Store
+Thumbs.db
+
+# Editor settings
+.vscode/
+.idea/
